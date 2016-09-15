@@ -14,3 +14,4 @@ GET     /assets/*file               controllers.Assets.versioned(path="/public",
 
 
 GET     /images                     controllers.ImageController.get(url: String)
+GET     /images/metadata            controllers.ImageController.getMetadata(url: String)

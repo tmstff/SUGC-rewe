@@ -26,9 +26,19 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
 
   makeSureDbExists(imageDatabaseUrl)
 
+  def getMetadata(imageUrl: String): Future[Option[JsValue]] = {
+    val documentUrlInDb: String = documentUrlInDbOf(imageUrl)
+    wsClient.url( documentUrlInDb ).get().map(
+      response =>
+        response.status match {
+          case 200 => Some(response.json)
+          case status => Logger.info(s"status code for GET to $documentUrlInDb was $status!"); None
+        }
+    )
+  }
+
   def get(imageUrl: String): Future[Streamed] = {
-    val id = toBase64(imageUrl)
-    val documentUrlInDb = s"$imageDatabaseUrl/$id"
+    val documentUrlInDb: String = documentUrlInDbOf(imageUrl)
     val attachmentUrlInDb = s"$documentUrlInDb/attachment"
 
     for (
@@ -39,6 +49,11 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
       imageFromDb <- streamImageFromDb( attachmentUrlInDb )
     ) yield (imageFromDb)
 
+  }
+
+  private def documentUrlInDbOf(imageUrl: String): String = {
+    val id = toBase64(imageUrl)
+    s"$imageDatabaseUrl/$id"
   }
 
   private def doNothing: Future[Unit] = {

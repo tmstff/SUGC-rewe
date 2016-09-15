@@ -15,4 +15,10 @@ class ImageController @Inject()(couchDbImageCache: CouchDbImageCache)(implicit e
     }
   }
 
+  def getMetadata(url: String) = Action.async {
+    couchDbImageCache.getMetadata(url).map {
+      case Some(json) => Ok(json)
+      case _ => NotFound
+    }
+  }
 }
