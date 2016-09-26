@@ -79,12 +79,14 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
 
   private def getOrCreateDocument(imageUrl: String, documentUrlInDb: String): Future[ JsValue ] = {
     for (
-      putResponse <-
+      _ <-
         wsClient.url(documentUrlInDb)
-          .put( Json.obj( "url" -> imageUrl ) );
-      documentResponse <-
-        if (putResponse.status == 201) Future { putResponse }
-        else wsClient.url( documentUrlInDb ).get()
+          .put( Json.obj( "url" -> imageUrl ) )
+          .map(r =>
+            if (r.status != 201) {
+              Logger.warn( s"status code for PUT to $documentUrlInDb was ${r.status}!" )
+            });
+      documentResponse <- wsClient.url( documentUrlInDb ).get()
     ) yield ( documentResponse.json )
   }
 
