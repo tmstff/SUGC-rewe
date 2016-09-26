@@ -51,15 +51,6 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
 
   }
 
-  private def documentUrlInDbOf(imageUrl: String): String = {
-    val id = toBase64(imageUrl)
-    s"$imageDatabaseUrl/$id"
-  }
-
-  private def doNothing: Future[Unit] = {
-    Future(Unit)
-  }
-
   private def makeSureDbExists(dbUrl: String) =
     wsClient.url( imageDatabaseUrl ).execute( "PUT" ).map(
       response =>
@@ -72,6 +63,19 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
             Logger.warn(s"Database creation replied with status $status and body '${response.body}'")
         }
     )
+
+
+  private def documentUrlInDbOf(imageUrl: String): String = {
+    val id = toBase64(imageUrl)
+    s"$imageDatabaseUrl/$id"
+  }
+
+  private def toBase64(string: String): String =
+    new String( Base64.getEncoder().encode( string.getBytes("UTF-8") ), "UTF-8" )
+
+  private def doNothing: Future[Unit] = {
+    Future(Unit)
+  }
 
   private def getOrCreateDocument(imageUrl: String, documentUrlInDb: String): Future[ JsValue ] = {
     for (
@@ -88,7 +92,7 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
     (document \ "_attachments" \ "attachment").toOption.isDefined
 
   private def revisionOf(document: JsValue): String =
-    (document \ "rev").as[String]
+    (document \ "_rev").as[String]
 
   private def streamImageToDb( imageUrl: String, attachmentUrlInDb: String, documentRevision: String ): Future[Unit] = {
     wsClient.url(imageUrl).withMethod("GET").stream().flatMap {
@@ -117,7 +121,7 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
     }
   }
 
-  def sourceToBodyGenerator(body: Source[ByteString, _], contentLength: Long): ReactiveStreamsBodyGenerator = {
+  private def sourceToBodyGenerator(body: Source[ByteString, _], contentLength: Long): ReactiveStreamsBodyGenerator = {
     val toByteBuffer = Flow[ByteString].map( _.toByteBuffer )
     val publisher = body.via( toByteBuffer ).runWith( Sink.asPublisher(true) )
     new ReactiveStreamsBodyGenerator( publisher, contentLength )
@@ -166,7 +170,5 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
         -1L
     }
 
-  private def toBase64(string: String): String =
-    new String( Base64.getEncoder().encode( string.getBytes("UTF-8") ), "UTF-8" )
 }
 
