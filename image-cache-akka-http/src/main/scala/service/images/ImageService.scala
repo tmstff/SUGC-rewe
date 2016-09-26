@@ -9,21 +9,20 @@ import persistence.CouchDbImageCache
 class ImageService @Inject() (couchDbImageCache: CouchDbImageCache)  {
 
   val imageRoutes =
-    path("images") {
       get {
-        parameters("url") {
-          url =>
-            complete( couchDbImageCache.get(url) )
-        }
-      }
-      path("metadata") {
-        get {
+        path("images") {
           parameters("url") {
             url =>
-              complete( couchDbImageCache.getMetadata(url) )
+              complete(couchDbImageCache.get(url))
+          }
+        } ~
+        path("images" / "metadata") {
+          get {
+            parameters("url") {
+              url =>
+                complete(couchDbImageCache.getMetadata(url))
+            }
           }
         }
-    }
-
-
+      }
 }

@@ -67,11 +67,10 @@ class CouchDbImageCache @Inject() (settings: SettingsImpl) (implicit actorSystem
   private def getOrCreateDocument(imageUrl: String, documentUrlInDb: String): Future[ JsValue ] = {
     val documentBody = httpEntityOf(JsObject("url" -> JsString(imageUrl)))
     val documentResponse = for (
-      putResponse <-
-      Http().singleRequest( HttpRequest(uri = documentUrlInDb, entity = documentBody, method = PUT) );
-      documentResponse <-
-        if ( putResponse.status == Created ) Future ( putResponse )
-        else Http().singleRequest( HttpRequest( uri = documentUrlInDb ) )
+      _ <-
+      Http().singleRequest( HttpRequest(uri = documentUrlInDb, entity = documentBody, method = PUT) )
+        .map(r => if ( r.status != Created ) println( s"status code for PUT to $documentUrlInDb was ${r.status.intValue()}!"));
+      documentResponse <- Http().singleRequest( HttpRequest( uri = documentUrlInDb ) )
     ) yield ( documentResponse )
     documentResponse.flatMap( dr => parseJson(dr.entity) )
   }
