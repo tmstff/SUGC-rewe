@@ -1,4 +1,4 @@
-package com.example
+package imagecache
 
 import com.twitter.finagle.http.Status.Ok
 import com.twitter.finatra.http.test.EmbeddedHttpServer
