@@ -2,7 +2,7 @@ enablePlugins(JavaAppPackaging)
 
 organization := "io.forward"
 
-name := """image-cache-akka-http-ms"""
+name := """image-cache-akka-http"""
 
 version := "1.0"
 
