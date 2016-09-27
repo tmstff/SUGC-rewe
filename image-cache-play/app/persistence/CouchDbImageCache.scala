@@ -73,9 +73,8 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
   private def toBase64(string: String): String =
     new String( Base64.getEncoder().encode( string.getBytes("UTF-8") ), "UTF-8" )
 
-  private def doNothing: Future[Unit] = {
+  private def doNothing: Future[Unit] =
     Future(Unit)
-  }
 
   private def getOrCreateDocument(imageUrl: String, documentUrlInDb: String): Future[ JsValue ] = {
     for (
@@ -84,7 +83,7 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
           .put( Json.obj( "url" -> imageUrl ) )
           .map(r =>
             if (r.status != 201) {
-              Logger.warn( s"status code for PUT to $documentUrlInDb was ${r.status}!" )
+              Logger.info( s"status code for PUT to $documentUrlInDb was ${r.status}!" )
             });
       documentResponse <- wsClient.url( documentUrlInDb ).get()
     ) yield ( documentResponse.json )
