@@ -1,1 +1,0 @@
-Typesafe Activator template for a basic Finagle app.
