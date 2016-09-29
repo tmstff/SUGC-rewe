@@ -1,0 +1,58 @@
+================================================================================
+---- Global Information --------------------------------------------------------
+> request count                                        227 (OK=10     KO=217   )
+> min response time                                      4 (OK=23     KO=4     )
+> max response time                                  20025 (OK=78     KO=20025 )
+> mean response time                                  3182 (OK=51     KO=3326  )
+> std deviation                                       7310 (OK=18     KO=7445  )
+> response time 50th percentile                          6 (OK=57     KO=6     )
+> response time 75th percentile                          8 (OK=62     KO=7     )
+> response time 95th percentile                      20023 (OK=73     KO=20023 )
+> response time 99th percentile                      20024 (OK=77     KO=20024 )
+> mean requests/sec                                  7.567 (OK=0.333  KO=7.233 )
+---- Response Time Distribution ------------------------------------------------
+> t < 50 ms                                              3 (  1%)
+> 50 ms < t < 100 ms                                     7 (  3%)
+> t > 100 ms                                             0 (  0%)
+> failed                                               217 ( 96%)
+---- Errors --------------------------------------------------------------------
+> status.find.is(200), but actually found 500                       181 (83,41%)
+> status.find.is(200), but actually found 503                        36 (16,59%)
+================================================================================
+
+
+[ERROR] [09/29/2016 16:56:50.939] [default-akka.actor.default-dispatcher-32] [akka.actor.ActorSystemImpl(default)] Error during processing of request HttpRequest(HttpMethod(GET),http://localhost:8080/images?url=https%3A//raw.githubusercontent.com/docker-library/docs/2307451281c6b47b85abb3af9f0097e51c70a5be/couchdb/logo.png,List(Host: localhost:8080, Accept: */*, Timeout-Access: <function1>),HttpEntity.Strict(none/none,ByteString()),HttpProtocol(HTTP/1.1))
+akka.stream.BufferOverflowException: Exceeded configured max-open-requests value of [32]
+	at akka.http.impl.engine.client.PoolInterfaceActor$$anonfun$receive$1.applyOrElse(PoolInterfaceActor.scala:115)
+	at akka.actor.Actor$class.aroundReceive(Actor.scala:484)
+	at akka.http.impl.engine.client.PoolInterfaceActor.akka$stream$actor$ActorSubscriber$$super$aroundReceive(PoolInterfaceActor.scala:46)
+	at akka.stream.actor.ActorSubscriber$class.aroundReceive(ActorSubscriber.scala:201)
+	at akka.http.impl.engine.client.PoolInterfaceActor.akka$stream$actor$ActorPublisher$$super$aroundReceive(PoolInterfaceActor.scala:46)
+	at akka.stream.actor.ActorPublisher$class.aroundReceive(ActorPublisher.scala:325)
+	at akka.http.impl.engine.client.PoolInterfaceActor.aroundReceive(PoolInterfaceActor.scala:46)
+	at akka.actor.ActorCell.receiveMessage(ActorCell.scala:526)
+	at akka.actor.ActorCell.invoke(ActorCell.scala:495)
+	at akka.dispatch.Mailbox.processMailbox(Mailbox.scala:257)
+	at akka.dispatch.Mailbox.run(Mailbox.scala:224)
+	at akka.dispatch.Mailbox.exec(Mailbox.scala:234)
+	at scala.concurrent.forkjoin.ForkJoinTask.doExec(ForkJoinTask.java:260)
+	at scala.concurrent.forkjoin.ForkJoinPool$WorkQueue.runTask(ForkJoinPool.java:1339)
+	at scala.concurrent.forkjoin.ForkJoinPool.runWorker(ForkJoinPool.java:1979)
+	at scala.concurrent.forkjoin.ForkJoinWorkerThread.run(ForkJoinWorkerThread.java:107)
+
+
+
+Stackoverflow
+
+Akka absolutely enables backpressure, you're just not taking advantage of it. Instead of dispatching multiple single requests, you can use a single Flow to send all of your requests through. From the documentation:
+
+final Flow<HttpRequest, HttpResponse, Future<OutgoingConnection>> connectionFlow =
+  Http.get(actorSystem).outgoingConnection("127.0.0.1", 8082);
+You can then use this Flow to process your HttpRequest objects:
+
+HttpRequest req = HttpRequest.GET("/test")
+
+//imitates your for-loop example of 100 requests
+Source.from(() -> Collections.nCopies(100, req).iterator())
+      .via(connectionFlow)
+      .runForeach(...)

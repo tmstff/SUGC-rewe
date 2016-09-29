@@ -26,17 +26,6 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
 
   makeSureDbExists(imageDatabaseUrl)
 
-  def getMetadata(imageUrl: String): Future[Option[JsValue]] = {
-    val documentUrlInDb: String = documentUrlInDbOf(imageUrl)
-    wsClient.url( documentUrlInDb ).get().map(
-      response =>
-        response.status match {
-          case 200 => Some(response.json)
-          case status => Logger.info(s"status code for GET to $documentUrlInDb was $status!"); None
-        }
-    )
-  }
-
   def get(imageUrl: String): Future[Streamed] = {
     val documentUrlInDb: String = documentUrlInDbOf(imageUrl)
     val attachmentUrlInDb = s"$documentUrlInDb/attachment"
@@ -51,6 +40,16 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
 
   }
 
+  def getMetadata(imageUrl: String): Future[Option[JsValue]] = {
+    wsClient.url( documentUrlInDbOf(imageUrl) ).get().map(
+      response =>
+        response.status match {
+          case 200 => Some(response.json)
+          case status => Logger.info(s"status code for GET to ${documentUrlInDbOf(imageUrl)} was $status!"); None
+        }
+    )
+  }
+
   private def makeSureDbExists(dbUrl: String) =
     wsClient.url( imageDatabaseUrl ).execute( "PUT" ).map(
       response =>
@@ -63,7 +62,6 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
             Logger.warn(s"Database creation replied with status $status and body '${response.body}'")
         }
     )
-
 
   private def documentUrlInDbOf(imageUrl: String): String = {
     val id = toBase64(imageUrl)
@@ -82,8 +80,8 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
         wsClient.url(documentUrlInDb)
           .put( Json.obj( "url" -> imageUrl ) )
           .map(r =>
-            if (r.status != 201) {
-              Logger.info( s"status code for PUT to $documentUrlInDb was ${r.status}!" )
+            if (r.status != 201 && r.status != 409) {
+              Logger.warn( s"status code for PUT to $documentUrlInDb was ${r.status}!" )
             });
       documentResponse <- wsClient.url( documentUrlInDb ).get()
     ) yield ( documentResponse.json )

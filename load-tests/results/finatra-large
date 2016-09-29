@@ -1,0 +1,98 @@
+================================================================================
+---- Global Information --------------------------------------------------------
+> request count                                        185 (OK=0      KO=185   )
+> min response time                                     69 (OK=-      KO=69    )
+> max response time                                   5443 (OK=-      KO=5443  )
+> mean response time                                  1315 (OK=-      KO=1315  )
+> std deviation                                       1585 (OK=-      KO=1585  )
+> response time 50th percentile                        480 (OK=-      KO=480   )
+> response time 75th percentile                       1790 (OK=-      KO=1790  )
+> response time 95th percentile                       4836 (OK=-      KO=4836  )
+> response time 99th percentile                       5309 (OK=-      KO=5309  )
+> mean requests/sec                                  6.167 (OK=-      KO=6.167 )
+---- Response Time Distribution ------------------------------------------------
+> t < 50 ms                                              0 (  0%)
+> 50 ms < t < 100 ms                                     0 (  0%)
+> t > 100 ms                                             0 (  0%)
+> failed                                               185 (100%)
+---- Errors --------------------------------------------------------------------
+> status.find.is(200), but actually found 500                       185 (100,0%)
+================================================================================
+
+
+HTTP content length exceeded 5242880 bytes.
+
+
+[error] com.twitter.finagle.CancelledRequestException: request cancelled. Remote Info: Upstream Address: /0:0:0:0:0:0:0:1:53723, Upstream Client Id: Not Available, Downstream Address: localhost/127.0.0.1:5984, Downstream Client Id: localhost:5984, Trace Id: 7a7b51940525ee82.024a6a70bd3f3a43<:7a7b51940525ee82
+[error] 	at com.twitter.finagle.NoStacktrace(Unknown Source) ~[na:na]
+
+
+
+[error] 2016-09-29 17:01:39,687 ERR 64d0b807a71aea9d ResponseBuilder           Unhandled Exception
+[error] com.twitter.finagle.UnknownChannelException: HTTP content length exceeded 5242880 bytes. at remote address: localhost/127.0.0.1:5984 from service: localhost:5984. Remote Info: Upstream Address: /0:0:0:0:0:0:0:1:53624, Upstream Client Id: Not Available, Downstream Address: localhost/127.0.0.1:5984, Downstream Client Id: localhost:5984, Trace Id: 64d0b807a71aea9d.a65f60949f8b9ea5<:64d0b807a71aea9d
+[error] 	at com.twitter.finagle.ChannelException$.apply(Exceptions.scala:259) ~[finagle-core_2.11-6.35.0.jar:6.35.0]
+[error] 	at com.twitter.finagle.netty3.transport.ChannelTransport.handleUpstream(ChannelTransport.scala:84) [finagle-core_2.11-6.35.0.jar:6.35.0]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:791) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.exceptionCaught(SimpleChannelUpstreamHandler.java:153) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:112) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:791) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.exceptionCaught(SimpleChannelUpstreamHandler.java:153) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:112) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:791) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.handler.codec.frame.FrameDecoder.exceptionCaught(FrameDecoder.java:377) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:112) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.handler.codec.http.HttpClientCodec.handleUpstream(HttpClientCodec.java:92) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:791) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelHandler.exceptionCaught(SimpleChannelHandler.java:156) [netty-3.10.5.Final.jar:na]
+[error] 	at com.twitter.finagle.netty3.channel.ChannelStatsHandler.exceptionCaught(ChannelStatsHandler.scala:110) [finagle-core_2.11-6.35.0.jar:6.35.0]
+[error] 	at org.jboss.netty.channel.SimpleChannelHandler.handleUpstream(SimpleChannelHandler.java:130) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:791) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelHandler.exceptionCaught(SimpleChannelHandler.java:156) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelHandler.handleUpstream(SimpleChannelHandler.java:130) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:559) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.Channels.fireExceptionCaught(Channels.java:525) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.AbstractChannelSink.exceptionCaught(AbstractChannelSink.java:48) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.notifyHandlerException(DefaultChannelPipeline.java:658) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:566) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:791) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:296) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.handler.codec.frame.FrameDecoder.unfoldAndFireMessageReceived(FrameDecoder.java:459) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.handler.codec.replay.ReplayingDecoder.callDecode(ReplayingDecoder.java:536) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.handler.codec.replay.ReplayingDecoder.messageReceived(ReplayingDecoder.java:435) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:70) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.handler.codec.http.HttpClientCodec.handleUpstream(HttpClientCodec.java:92) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:791) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelHandler.messageReceived(SimpleChannelHandler.java:142) [netty-3.10.5.Final.jar:na]
+[error] 	at com.twitter.finagle.netty3.channel.ChannelStatsHandler.messageReceived(ChannelStatsHandler.scala:68) [finagle-core_2.11-6.35.0.jar:6.35.0]
+[error] 	at org.jboss.netty.channel.SimpleChannelHandler.handleUpstream(SimpleChannelHandler.java:88) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline$DefaultChannelHandlerContext.sendUpstream(DefaultChannelPipeline.java:791) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelHandler.messageReceived(SimpleChannelHandler.java:142) [netty-3.10.5.Final.jar:na]
+[error] 	at com.twitter.finagle.netty3.channel.ChannelRequestStatsHandler.messageReceived(ChannelRequestStatsHandler.scala:32) [finagle-core_2.11-6.35.0.jar:6.35.0]
+[error] 	at org.jboss.netty.channel.SimpleChannelHandler.handleUpstream(SimpleChannelHandler.java:88) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:559) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:268) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.Channels.fireMessageReceived(Channels.java:255) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.socket.nio.NioWorker.read(NioWorker.java:88) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.socket.nio.AbstractNioWorker.process(AbstractNioWorker.java:108) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.socket.nio.AbstractNioSelector.run(AbstractNioSelector.java:337) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.socket.nio.AbstractNioWorker.run(AbstractNioWorker.java:89) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.socket.nio.NioWorker.run(NioWorker.java:178) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.util.ThreadRenamingRunnable.run(ThreadRenamingRunnable.java:108) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.util.internal.DeadLockProofWorker$1.run(DeadLockProofWorker.java:42) [netty-3.10.5.Final.jar:na]
+[error] 	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1142) [na:1.8.0_74]
+[error] 	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:617) [na:1.8.0_74]
+[error] 	at java.lang.Thread.run(Thread.java:745) [na:1.8.0_74]
+[error] Caused by: org.jboss.netty.handler.codec.frame.TooLongFrameException: HTTP content length exceeded 5242880 bytes.
+[error] 	at org.jboss.netty.handler.codec.http.HttpChunkAggregator.messageReceived(HttpChunkAggregator.java:169) ~[netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.SimpleChannelUpstreamHandler.handleUpstream(SimpleChannelUpstreamHandler.java:70) [netty-3.10.5.Final.jar:na]
+[error] 	at org.jboss.netty.channel.DefaultChannelPipeline.sendUpstream(DefaultChannelPipeline.java:564) [netty-3.10.5.Final.jar:na]
+[error] 	... 31 common frames omitted

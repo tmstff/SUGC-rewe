@@ -1,0 +1,18 @@
+================================================================================
+---- Global Information --------------------------------------------------------
+> request count                                        240 (OK=240    KO=0     )
+> min response time                                      8 (OK=8      KO=-     )
+> max response time                                     94 (OK=94     KO=-     )
+> mean response time                                    31 (OK=31     KO=-     )
+> std deviation                                         21 (OK=21     KO=-     )
+> response time 50th percentile                         34 (OK=34     KO=-     )
+> response time 75th percentile                         52 (OK=52     KO=-     )
+> response time 95th percentile                         55 (OK=55     KO=-     )
+> response time 99th percentile                         62 (OK=62     KO=-     )
+> mean requests/sec                                      8 (OK=8      KO=-     )
+---- Response Time Distribution ------------------------------------------------
+> t < 50 ms                                            133 ( 55%)
+> 50 ms < t < 100 ms                                   107 ( 45%)
+> t > 100 ms                                             0 (  0%)
+> failed                                                 0 (  0%)
+================================================================================
