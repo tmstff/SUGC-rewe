@@ -4,10 +4,11 @@ import java.util.Base64
 import javax.inject.Inject
 
 import com.fasterxml.jackson.databind.JsonNode
-import com.fasterxml.jackson.databind.node.{JsonNodeCreator, JsonNodeFactory}
+import com.fasterxml.jackson.databind.node.JsonNodeFactory
 import com.twitter.finagle.http._
 import com.twitter.finatra.httpclient.{HttpClient, RequestBuilder}
 import com.twitter.finatra.json.FinatraObjectMapper
+import com.twitter.inject.Logging
 import com.twitter.util.Future
 import com.typesafe.config.Config
 import imagecache.CouchDbHttpClient
@@ -17,10 +18,12 @@ import scala.concurrent.ExecutionContext
 
 
 class CouchDbImageCache @Inject() (@CouchDbHttpClient couchDbHttpClient: HttpClient, wSClient: WSClient, config: Config, mapper: FinatraObjectMapper)
-    (implicit executionContext: ExecutionContext) {
+    (implicit executionContext: ExecutionContext) extends Logging {
 
   // for wsClient
   val couchDbUrl = config.getString("couchDbUrl")
+
+  makeSureDbExists(dbPath)
 
   def get(imageUrl: String): Future[Response] = {
     for (
@@ -35,6 +38,18 @@ class CouchDbImageCache @Inject() (@CouchDbHttpClient couchDbHttpClient: HttpCli
   def getMetadata(imageUrl: String): Future[Response] =
     couchDbHttpClient.execute( RequestBuilder.get( dbDocumentPath( imageUrl ) ).request )
 
+  private def makeSureDbExists(path: String) =
+    couchDbHttpClient.execute( RequestBuilder.put(path) ).map(
+      response =>
+        response.status.code match {
+          case 201 =>
+            info("Database was created")
+          case 412 =>
+            info("Database already existed")
+          case status =>
+            warn(s"Database creation replied with status $status and body '${response.contentString}'")
+        }
+    )
 
   private def getOrCreateDocument(imageUrl: String, documentUrlInDb: String): Future[ JsonNode ] = {
     for (
@@ -44,7 +59,7 @@ class CouchDbImageCache @Inject() (@CouchDbHttpClient couchDbHttpClient: HttpCli
   }
 
   private def toJson( param: (String, String) ): String =
-    mapper.writePrettyString(new JsonNodeFactory(false).objectNode().put(param._1, param._2))
+    mapper.writePrettyString( new JsonNodeFactory(false).objectNode().put(param._1, param._2) )
 
   private def attachmentExists(document: JsonNode): Boolean =
     document.hasNonNull("_attachments") &&
@@ -57,14 +72,14 @@ class CouchDbImageCache @Inject() (@CouchDbHttpClient couchDbHttpClient: HttpCli
     import imagecache.util.TwitterConverters._
 
     scalaToTwitterFuture(
-      wSClient.url( imageUrl ).get().map{ r => println(s"wsclient status code ${r.status} and Content-Type ${r.header("Content-Type")}" ); r}
+      wSClient.url( imageUrl ).get().map{ r => debug( s"get image from internet status code ${r.status} and Content-Type ${r.header("Content-Type")}" ); r}
         .flatMap {
           response =>
             wSClient.url( couchDbUrl + "/" + attachmentUrlInDb )
               .withQueryString("rev" -> revision)
               .withHeaders( "Content-Type" -> response.header("Content-Type").getOrElse("application/octet-stream") )
               .put( response.bodyAsBytes )
-              .map{ r => println("streamImageToDb status: " + r.status); r }
+              .map{ r => info("streamImageToDb status: " + r.status); r }
         }
     )
 
@@ -75,7 +90,7 @@ class CouchDbImageCache @Inject() (@CouchDbHttpClient couchDbHttpClient: HttpCli
     val request = Request(Method.Get, uri.getPath)
 
     client(request)
-      .map{r => println("streamImageToDb Status: " + r.status + " body:" + r.contentString); r}
+      .map{r => info("streamImageToDb Status: " + r.status + " body:" + r.contentString); r}
       */
   }
 
@@ -85,7 +100,9 @@ class CouchDbImageCache @Inject() (@CouchDbHttpClient couchDbHttpClient: HttpCli
     dbDocumentPath(imageUrl) + "/attachment"
 
   private def dbDocumentPath(imageUrl: String) =
-    "/images/" + toBase64(imageUrl)
+    dbPath + toBase64(imageUrl)
+
+  private def dbPath: String = "/images/"
 
   private def toBase64(string: String): String =
     new String( Base64.getEncoder().encode( string.getBytes("UTF-8") ), "UTF-8" )
