@@ -72,7 +72,7 @@ class CouchDbImageCache @Inject()(configuration: Configuration, wsClient: WSClie
     new String( Base64.getEncoder().encode( string.getBytes("UTF-8") ), "UTF-8" )
 
   private def doNothing: Future[Unit] =
-    Future(Unit)
+    Future.successful(Unit)
 
   private def getOrCreateDocument(imageUrl: String, documentUrlInDb: String): Future[ JsValue ] = {
     for (

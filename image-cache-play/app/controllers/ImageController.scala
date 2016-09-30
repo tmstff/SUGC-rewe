@@ -8,7 +8,7 @@ import play.api.mvc._
 
 import scala.concurrent.ExecutionContext
 
-class ImageController @Inject()(couchDbImageCache: CouchDbImageCache)(implicit ec: ExecutionContext) extends Controller {
+class ImageController @Inject()( couchDbImageCache: CouchDbImageCache )( implicit ec: ExecutionContext ) extends Controller {
 
   def get(url: String) = Action.async {
     Logger.info(s"Serving $url")
